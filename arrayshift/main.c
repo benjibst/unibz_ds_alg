@@ -44,8 +44,8 @@ void print_array(int A[], int length) {
 void fill_array_shifted(int *A, size_t n) {
   srand(time(NULL));
   int start_nr = 0;
-  int shift_idx = rand() % n;
-  for (int i = shift_idx; i < n; ++i) {
+  size_t shift_idx = rand() % n;
+  for (size_t i = shift_idx; i < n; ++i) {
     start_nr += rand() % 3 + 1;
     A[i] = start_nr;
   }
@@ -69,15 +69,12 @@ int maxPossibleGain(int A[], int n) {
   return maxgain;
 }
 
-double get_time_diff_seconds(struct timespec t1, struct timespec t2) {
-  return (double)(t2.tv_sec - t1.tv_sec +
-                  (t2.tv_nsec - t1.tv_nsec) / 1000000000.0);
-}
+
 
 void compare_algorithms() {
   const int retries = 50;
   printf("%15s%15s%15s\n", "n", "naive t[s]", "smart t[s]");
-  size_t n_elements = 100000000;
+  size_t n_elements = 1000000000;
   int *arr = malloc(sizeof(int) * n_elements);
   struct timespec time_naive1;
   struct timespec time_naive2;
