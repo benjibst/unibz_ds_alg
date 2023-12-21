@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <array.h>
+#include <benchmark.h>
 #include <time.h>
+#include <stdint.h>
 
 // struct for pair of ints
 typedef struct {
@@ -46,61 +47,54 @@ PairOfInts sum_sp(const int A[], size_t start, size_t end) {
     return sum_sp;
 }
 
+int max_2(int l, int r) {
+    return r > l ? r : l;
+}
 
-// maximal partial sum of an array
+int max_3(int l, int m, int r) {
+    return max_2(max_2(l, m), r);
+}
+
+int max_crossing_sum(int *A, size_t m, size_t sz) {
+    int maxsum_l = INT32_MIN;
+    int maxsum_r = INT32_MIN;
+    int sum_l = 0;
+    int sum_r = 0;
+    for (size_t i = m; i < SIZE_MAX; --i) {
+        sum_l += A[i];
+        if (sum_l > maxsum_l)
+            maxsum_l = sum_l;
+    }
+    for (size_t i = m; i < sz; ++i) {
+        sum_r += A[i];
+        if (sum_r > maxsum_r)
+            maxsum_r = sum_r;
+    }
+    return max_3(maxsum_l, maxsum_r, maxsum_l + maxsum_r - A[m]);
+}
+
 int maximalPartialSum(int A[], size_t size) {
-    // to fill
+    if (size == 1) {
+        return *A;
+    }
+    if (size == 2) {
+        return max_3(A[0], A[1], A[0] + A[1]);
+    }
+    size_t m = size / 2;
+    return max_3(maximalPartialSum(A,size/2), maximalPartialSum(A+m,size-m),max_crossing_sum(A,m,size));
 }
 
-int sumOfProducts_efficient(const int *const A, size_t n) {
-    int sum = 0;
-    int sum_of_coeff = 0;
-    for (size_t i = 0; i < n - 1; i++) {
-        sum_of_coeff += A[i];
-        sum += sum_of_coeff * A[i + 1];
-    }
-    return sum;
-}
-
-void compare_algorithms(void) {
-    const int retries = 10;
-    printf("%15s%15s%15s\n", "n", "old t[s]", "new t[s]");
-    struct timespec time_old1;
-    struct timespec time_old2;
-    struct timespec time1;
-    struct timespec time2;
-    for (size_t curr_elements = 10; curr_elements <= 100000000; curr_elements *= 10) {
-        int* arr = rand_ints(curr_elements);
-        if (!arr) break;
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time_old1);
-        for (int i = 0; i < retries; ++i) {
-            sumOfProducts_efficient(arr, curr_elements);
-        }
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time_old2);
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time1);
-        for (int i = 0; i < retries; ++i) {
-            sumOfProds(arr, curr_elements);
-        }
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time2);
-        double time_old = get_time_diff_seconds(time_old1, time_old2) / retries;
-        double time = get_time_diff_seconds(time1, time2) / retries;
-        printf("%15zu%15.10f%15.10f\n", curr_elements, time_old, time);
-        free(arr);
-    }
-}
 
 int main(void) {
 
     int A[] = {1, 2, 3, 4, 5, 6, 7, 8};
     size_t size_A = arr_sz(A);
     PairOfInts s_sp = sum_sp(A, 0, size_A);
-    printf("Correct: %d\n", sumOfProducts_efficient(A, size_A));
     printf("%d %d\n", s_sp.first, s_sp.second);
-    compare_algorithms();
 
-//    int B[] = {4, -5, 6, 7, 8, -10, 5};
-//    size_t size_B = arr_sz(B);
-//    printf("%d\n", maximalPartialSum(B, size_B));
+    int B[] = {1,-2,3};
+    size_t size_B = sizeof(B)/sizeof(*B);
+    printf("%d\n", maximalPartialSum(B, size_B));
 
     return 0;
 

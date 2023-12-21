@@ -46,7 +46,7 @@ void selection_sort(void *data, size_t n_items, size_t item_sz,
                     int (*cmp)(long long, long long)) {
   long long item_vals[n_items];
   for (size_t i = 0; i < n_items; i++) {
-    item_vals[i] = val_item(data + i * item_sz);
+    item_vals[i] = val_item((char*)data + i * item_sz);
   }
   for (size_t i = 0; i < n_items - 1; i++) {
     size_t min_val_idx = i;
@@ -63,8 +63,8 @@ void selection_sort(void *data, size_t n_items, size_t item_sz,
     item_vals[i] = item_vals[min_val_idx];
     item_vals[min_val_idx] = val_tmp;
     // swap items with variable size
-    void *i_ptr = data + i * item_sz;
-    void *min_ptr = data + min_val_idx * item_sz;
+    void *i_ptr = (char*)data + i * item_sz;
+    void *min_ptr = (char*)data + min_val_idx * item_sz;
     char tmp[item_sz];
     memcpy(tmp, i_ptr, item_sz);
     memcpy(i_ptr, min_ptr, item_sz);
@@ -77,18 +77,18 @@ void insertion_sort(void *data, size_t n_items, size_t item_sz,
                     int (*cmp)(long long, long long)) {
   long long item_vals[n_items];
   for (size_t i = 0; i < n_items; i++) {
-    item_vals[i] = val_item(data + i * item_sz);
+    item_vals[i] = val_item((char*)data + i * item_sz);
   }
-  for (long long i = 1; i < n_items; i++) {
+  for (size_t i = 1; i < n_items; i++) {
     long long val = item_vals[i];
     char tmp[item_sz];
-    memcpy(tmp, data + i * item_sz, item_sz);
-    long long j;
+    memcpy(tmp, (char*)data + i * item_sz, item_sz);
+    size_t j;
     for (j = 0; j < i && cmp(item_vals[j], val); j++) {
     }
     if (j != i) {
-      memmove(data + (j + 1) * item_sz, data + j * item_sz, (i - j) * item_sz);
-      memcpy(data + j * item_sz, tmp, item_sz);
+      memmove((char*)data + (j + 1) * item_sz, (char*)data + j * item_sz, (i - j) * item_sz);
+      memcpy((char*)data + j * item_sz, tmp, item_sz);
       memmove(item_vals + j + 1, item_vals + j, (i - j) * sizeof(long long));
       item_vals[j] = val;
     }

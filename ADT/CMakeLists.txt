@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+project(ADT)
+add_library(ADT STATIC linkedlist.c)
+add_executable(ADT_test adttest.c)
+target_link_libraries(ADT_test PRIVATE ADT)

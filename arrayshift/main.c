@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "benchmark.h"
 
 // findShift auxiliary function
 size_t findShift_aux(int *A, size_t l, size_t r) {
@@ -31,16 +32,6 @@ size_t findShift_naive(const int *const A, size_t n) {
   return 0;
 }
 
-void print_array(int A[], int length) {
-  if (!length)
-    return;
-  printf("[%d", A[0]);
-  for (int i = 1; i < length; i++) {
-    printf(",%d", A[i]);
-  }
-  printf("]\n");
-}
-
 void fill_array_shifted(int *A, size_t n) {
   srand(time(NULL));
   int start_nr = 0;
@@ -49,7 +40,7 @@ void fill_array_shifted(int *A, size_t n) {
     start_nr += rand() % 3 + 1;
     A[i] = start_nr;
   }
-  for (int i = 0; i < shift_idx; ++i) {
+  for (size_t i = 0; i < shift_idx; ++i) {
     start_nr += rand() % 3 + 1;
     A[i] = start_nr;
   }
@@ -68,13 +59,10 @@ int maxPossibleGain(int A[], int n) {
   }
   return maxgain;
 }
-
-
-
-void compare_algorithms() {
+void compare_algorithms(void) {
   const int retries = 50;
   printf("%15s%15s%15s\n", "n", "naive t[s]", "smart t[s]");
-  size_t n_elements = 1000000000;
+  size_t n_elements = 100000000;
   int *arr = malloc(sizeof(int) * n_elements);
   struct timespec time_naive1;
   struct timespec time_naive2;
@@ -93,22 +81,21 @@ void compare_algorithms() {
       findShift(arr, curr_elements);
     }
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &time2);
-    double time_naive =
-        get_time_diff_seconds(time_naive1, time_naive2) / retries;
-    double time = get_time_diff_seconds(time1, time2) / retries;
+    double time_naive = time_diff_secs(&time_naive1, &time_naive2) / retries;
+    double time = time_diff_secs(&time1, &time2) / retries;
     printf("%15zu%15.10f%15.10f\n", curr_elements, time_naive, time);
   }
   free(arr);
 }
 
-int main() {
+int main(void) {
   compare_algorithms();
   int A[] = {4, 5, 1, 2};
   size_t n = sizeof(A) / sizeof(A[0]);
   size_t shiftIndex_naive = findShift_naive(A, n);
-  printf("Shift Index: %d\n", shiftIndex_naive);
+  printf("Shift Index: %lu\n", shiftIndex_naive);
   size_t shiftIndex = findShift(A, n);
-  printf("Shift Index: %d\n", shiftIndex);
+  printf("Shift Index: %lu\n", shiftIndex);
 
   int B[] = {8, 2, 3, 4, 5, 6, 7, 8};
   int m = sizeof(B) / sizeof(B[0]);
