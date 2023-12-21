@@ -35,6 +35,17 @@ int Prepend(LinkedList *list, void *data)
     return InsertAt(list, 0, data);
 }
 
+ListNode *GetNodeAt(LinkedList *list, size_t index)
+{
+    if (index >= list->node_cnt) {
+        fputs("Read access out of bounds", stderr);
+        return NULL;
+    }
+    ListNode *curr = list->head;
+    for (size_t i = 0; i < index; ++i) curr = curr->next;
+    return curr;
+}
+
 int InsertAt(LinkedList *list, size_t index, void *data)
 {
     if (index > list->node_cnt) {
@@ -55,8 +66,7 @@ int InsertAt(LinkedList *list, size_t index, void *data)
         list->tail->next = new;
         list->tail = new;
     }  else {
-        ListNode *l = list->head;
-        while (--index) l = l->next;
+        ListNode *l = GetNodeAt(list,index-1);
         ListNode *r = l->next;
         new->next = r;
         l->next = new;
@@ -65,16 +75,7 @@ int InsertAt(LinkedList *list, size_t index, void *data)
     return 0;
 }
 
-ListNode *GetNodeAt(LinkedList *list, size_t index)
-{
-    if (index >= list->node_cnt) {
-        fputs("Read access out of bounds", stderr);
-        return NULL;
-    }
-    ListNode *curr = list->head;
-    for (size_t i = 0; i < index; ++i) curr = curr->next;
-    return curr;
-}
+
 
 void* ViewAt(LinkedList *list, size_t index)
 {
