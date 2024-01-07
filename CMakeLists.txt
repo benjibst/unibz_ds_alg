@@ -19,6 +19,7 @@ add_executable(evensort evensort/main.c)
 add_executable(arrayshift arrayshift/main.c)
 add_executable(sum_of_products sum_of_products/main.c)
 add_executable(linkedlist lab7_linked_list/main.c)
+add_executable(priorityqueue lab8_priority_queue/main.c)
 add_executable(lab6
         lab6/main.c
         lab6/HeapSort.c
