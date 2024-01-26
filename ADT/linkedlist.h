@@ -1,7 +1,6 @@
 #include <stddef.h>
 #include <stdio.h>
 
-
 typedef struct listnode {
     struct listnode *next;
 } ListNode;
@@ -9,11 +8,11 @@ typedef struct listnode {
 typedef struct {
     ListNode *head;
     ListNode *tail;
-    size_t elem_sz;
+    size_t data_sz;
     size_t node_cnt;
 } LinkedList;
 
-LinkedList NewList(size_t data_sz);
+void InitList(LinkedList *list, size_t data_sz);
 
 int Append(LinkedList *list, void *data);
 

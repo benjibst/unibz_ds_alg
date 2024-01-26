@@ -3,25 +3,25 @@
 #include <stdio.h>
 #include <string.h>
 
-LinkedList NewList(size_t data_sz)
+void InitList(LinkedList *list,size_t data_sz)
 {
-    return (LinkedList) {.node_cnt = 0, .head = NULL, .tail = NULL, .elem_sz = data_sz};
+    memset(list,0,sizeof(LinkedList));
+    list->data_sz = data_sz;
 }
 
-#define DATA_AT_NODE(x)((x)+1)
+#define DATA_AT_LISTNODE(p_node)((p_node)+1)
 ListNode *NewNode(void *data, size_t data_sz)
 {
     //data will be stored after ListNode in memory
     //layout for a ListNode:
-    // ... [pointer to next][{elem_sz} bytes of memory for the data] ...
+    // ... [pointer to next][{data_sz} bytes of memory for the data] ...
     //to avoid storing unnecessary pointers
-    ListNode *new = malloc(sizeof(ListNode) + data_sz);
+    ListNode *new = calloc(1,sizeof(ListNode) + data_sz);
     if (!new) {
         fputs("Failed allocating node", stderr);
         return NULL;
     }
-    new->next = NULL;
-    memcpy(DATA_AT_NODE(new), data, data_sz);
+    memcpy(DATA_AT_LISTNODE(new), data, data_sz);
     return new;
 }
 
@@ -52,7 +52,7 @@ int InsertAt(LinkedList *list, size_t index, void *data)
         fputs("Write access out of bounds", stderr);
         return 1;
     };
-    ListNode *new = NewNode(data, list->elem_sz);
+    ListNode *new = NewNode(data, list->data_sz);
     if (!new) return -1;
     if(!list->node_cnt){
         list->head = new;
@@ -75,22 +75,19 @@ int InsertAt(LinkedList *list, size_t index, void *data)
     return 0;
 }
 
-
-
 void* ViewAt(LinkedList *list, size_t index)
 {
     ListNode *node = GetNodeAt(list,index);
     if(!node) return NULL;
-    return DATA_AT_NODE(node);
+    return DATA_AT_LISTNODE(node);
 }
 
 int ReadAt(LinkedList* list,size_t index,void* out){
     ListNode *node = GetNodeAt(list,index);
     if(!node) return 1;
-    memcpy(DATA_AT_NODE(node),out,list->elem_sz);
+    memcpy(DATA_AT_LISTNODE(node), out, list->data_sz);
     return 0;
 }
-
 
 int RemoveAt(LinkedList *list, size_t index)
 {
@@ -121,12 +118,11 @@ int RemoveAt(LinkedList *list, size_t index)
     return 0;
 }
 
-
 void PrintList(LinkedList *list, void (*print_fn)(const void *))
 {
     ListNode *curr = list->head;
     while (curr) {
-        (*print_fn)(DATA_AT_NODE(curr));
+        (*print_fn)(DATA_AT_LISTNODE(curr));
         printf(" -> ");
         curr = curr->next;
     }

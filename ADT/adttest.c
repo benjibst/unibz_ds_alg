@@ -1,57 +1,29 @@
 #include "linkedlist.h"
-typedef enum {
-    SIEBEN,
-    OCHT,
-    NEIN,
-    ZEHN,
-    UNTER,
-    OBER,
-    KINIG,
-    ASS
-}CardValue;
-typedef enum {
-    HERZ,OACHEL,SCHELL,LAB
-}CardColour;
-typedef struct {
-    CardValue value;
-    CardColour colour
-}PlayingCard;
-void print_playingcard(const void* card){
-    PlayingCard *cardp = (PlayingCard*) card;
-    printf("%d,%d",cardp->value,cardp->colour);
-}
-void print_int(const void* val){
-    printf("%d",*(int*)val);
-}
-void print_double(const void* val){
-    printf("%f",*(double *)val);
-}
-void test_list(void)
+#include "binarytree.h"
+#include <math.h>
+
+void print_int(const void *val)
 {
-    LinkedList list = NewList(sizeof(double));
-    PlayingCard arr[] = {
-            {SIEBEN,SCHELL},
-            {KINIG,OACHEL},
-            {ASS,LAB},
-            {UNTER,HERZ},
-            {OBER,SCHELL},
-    };
-    for (size_t i = 0; i < sizeof(arr)/sizeof(arr[0]); ++i) {
-        Append(&list,arr+i);
-    }
-    PrintList(&list,&print_playingcard);
-    RemoveAt(&list,0);
-    RemoveAt(&list,3);
-    PrintList(&list,&print_playingcard);
-    InsertAt(&list,1,arr);
-    InsertAt(&list,list.node_cnt-1,arr);
-    PrintList(&list,&print_playingcard);
-    FreeList(&list);
+    printf("%d", *(int *) val);
+}
+
+void print_double(const void *val)
+{
+    printf("%f", *(double *) val);
+}
+
+void test_tree(void)
+{
+    BinaryTree tree;
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6};
+    ArrToTree(&tree, arr, sizeof(arr) / sizeof(int), sizeof(int));
+    printf("Tree height: %lu\nShould be: %d\n", tree.height, (int) ceil(log2(sizeof(arr) / sizeof(int))));
+    PrintTree(&tree, print_int);
 }
 
 int main(void)
 {
-    test_list();
+    test_tree();
     return 0;
 }
 

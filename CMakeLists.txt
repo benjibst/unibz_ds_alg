@@ -29,6 +29,15 @@ add_executable(lab6
         lab6/SelectionSort.c
         lab6/Utils.c
 )
+add_executable(graph
+        graph/main.c
+        graph/DagClient.c
+        graph/Graph.c
+        graph/GraphClient.c
+        graph/List.c
+        graph/Queue.c
+        graph/Stack.c)
+
 target_include_directories(linkedlist PRIVATE ADT)
 target_link_libraries(linkedlist PRIVATE ADT)
 target_include_directories(lab6 PRIVATE benchmark)
